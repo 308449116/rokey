@@ -91,12 +91,14 @@ void CanvasItemBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
     painter->setPen(pen);
 
     QRectF itemRect = this->getCustomRect();
-    qDebug() << "itemRect:" <<itemRect;
+//    qDebug() << "itemRect:" <<itemRect;
     // 绘制轮廓线
     QRectF outLintRect = itemRect.adjusted(-m_nInterval, -m_nInterval, m_nInterval, m_nInterval);
-    qDebug() << "outLintRect:" <<outLintRect;
-
+//    qDebug() << "outLintRect:" <<outLintRect;
+//    painter->save();
+//    painter->scale(2, 1);
     painter->drawRect(outLintRect);
+//    painter->restore();
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(QBrush(m_cBrushColor));
@@ -263,12 +265,12 @@ void CanvasItemBase::mouseMoveRotateOperator(const QPointF& scenePos, const QPoi
 void CanvasItemBase::mouseReleaseMoveOperator(const QPointF& scenePos, const QPointF& loacalPos)
 {
 //    QList<NDAttributeBase*> attributes;
-    QVector<QVariant> values;
-    QVector<QVariant> oldValues;
+//    QVector<QVariant> values;
+//    QVector<QVariant> oldValues;
 
 //    attributes << m_pXPostionAttribute << m_pYPostionAttribute;
-    oldValues << m_startPos.x() << m_startPos.y();
-    values << this->pos().x() << this->pos().y();
+//    oldValues << m_startPos.x() << m_startPos.y();
+//    values << this->pos().x() << this->pos().y();
 
 //    g_currentCanvasManager->changedAttributeValues(attributes, oldValues);
 //    g_currentCanvasManager->changedAttributeValues(attributes, values, true);
@@ -276,6 +278,7 @@ void CanvasItemBase::mouseReleaseMoveOperator(const QPointF& scenePos, const QPo
 
 void CanvasItemBase::mouseReleaseResizeOperator(const QPointF& scenePos, const QPointF& loacalPos)
 {
+//    m_startSize = m_size;
 //    QList<NDAttributeBase*> attributes;
 //    QVector<QVariant> values;
 //    QVector<QVariant> oldValues;

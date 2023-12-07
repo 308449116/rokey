@@ -50,7 +50,7 @@ void CanvasTextItem::setCurrentText(const QString& text)
 //    qDebug() << "leftBearing:" << fm.leftBearing(m_cText[0]);
 //    qDebug() << "minLeftBearing:" << fm.minLeftBearing();
 
-    m_size = QSize(rect.width(), rect.height());
+    m_startSize = m_size = QSize(rect.width(), rect.height());
     this->prepareGeometryChange();
 
     this->update();
@@ -64,7 +64,7 @@ void CanvasTextItem::setCurrentFont(const QFont& font)
     QRect rect = fm.boundingRect(m_cText);
     m_descent = fm.descent();
 
-    m_size = QSize(rect.width(), rect.height());
+    m_startSize = m_size = QSize(rect.width(), rect.height());
     this->prepareGeometryChange();
 
     this->update();
@@ -73,11 +73,15 @@ void CanvasTextItem::setCurrentFont(const QFont& font)
 void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->save();
-
-    QRectF textRect = this->getCustomRect();
-
+    QPointF centerPos(0, 0);
+    QRectF textRect =  QRectF(centerPos.x() - m_startSize.width() / 2, centerPos.y() - m_startSize.height() / 2, \
+                            m_startSize.width(), m_startSize.height());
     QPainterPath path;
     path.addText(QPointF(textRect.bottomLeft().x(), textRect.bottomLeft().y() - m_descent), m_font, m_cText);
+    qDebug() << "m_size:" << m_size;
+    qDebug() << "m_startSize:" << m_startSize;
+    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
+    qDebug();
 
     // 添加轮廓
     QPen pen;
@@ -85,6 +89,7 @@ void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsIt
     pen.setColor(Qt::black);
 //    painter->strokePath(path, pen);
     painter->scale(m_scaleX, m_scaleY);
+
     // 绘制
     //    pen.setWidth(m_pPenSizeAttribute->getValue().toInt());
     //    pen.setColor(m_pTtextColorAttribute->getValue().value<QColor>());
@@ -95,6 +100,10 @@ void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsIt
     //        painter->setBrush(m_pFillColorAttribute->getValue().value<QColor>());
     painter->setBrush(QBrush(Qt::black));
     painter->drawPath(path);
+//    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
+
+//    m_size = QSizeF(textRect.width()*1, textRect.height()*2);
+//    qDebug() << "m_size:" << m_size;
 
     painter->restore();
 }
@@ -106,14 +115,17 @@ void CanvasTextItem::mouseMoveResizeOperator(const QPointF &scenePos, const QPoi
     qreal itemHeight = abs(loacalPos.y()) * 2 - m_nInterval - m_nEllipseWidth;
     //    if (m_isRatioScale)
     //        itemHeight = itemWidth * 1.0 / ratio;
-    m_scaleX = itemWidth / m_size.width();
-    m_scaleY = itemHeight / m_size.height();
-    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
+    m_scaleX = itemWidth / m_startSize.width();
+    m_scaleY = itemHeight / m_startSize.height();
+
+//    qDebug() << "m_size:" << m_size;
+//    qDebug() << "m_startSize:" << m_startSize;
+//    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
     // 设置图片的最小大小为10
     if (itemWidth < 10 || itemHeight < 10)
         return;
 
-    m_size = QSize(itemWidth, itemHeight);
+    m_size = QSize(m_startSize.width() * m_scaleX, m_startSize.height() * m_scaleY);
     //    m_pWidthAttribute->setValue(m_size.width());
     //    m_pHeightAttribute->setValue(m_size.height());
 

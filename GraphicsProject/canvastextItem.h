@@ -33,8 +33,6 @@ private:
     QString m_cText;
     QFont m_font;
     int m_descent;
-    qreal m_scaleX = 1;
-    qreal m_scaleY = 1;
 //    void initAttribute(void);
 
 //    NDBoolAttribute* m_pBOutLineAttribute = nullptr;                // 是否显示轮廓线
@@ -48,8 +46,6 @@ private:
 //    NDColorAttribute* m_pFillColorAttribute = nullptr;              // 填充颜色
 
 //    NDStringAttribute* m_pTextValueAttribute = nullptr;             // 文本内容
-
-    QRectF setupTextLayout(QTextLayout *layout);
 private slots:
     void onValueChanged(void);
     void onTextValueChanged(const QVariant& text);

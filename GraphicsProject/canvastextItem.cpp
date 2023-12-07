@@ -6,7 +6,7 @@
 //#include "NDStringAttribute.h"
 #include <QPainter>
 #include <QApplication>
-#include <QTextLayout>
+#include <QDebug>
 
 CanvasTextItem::CanvasTextItem(QGraphicsItem* parentItem)
     :CanvasItemBase(parentItem)
@@ -33,8 +33,8 @@ void CanvasTextItem::setCurrentText(const QString& text)
     //    m_pTextValueAttribute->setValue(m_cText);
     //    QObject::connect(m_pTextValueAttribute, &NDStringAttribute::valueChanged, this, &CanvasTextItem::onTextValueChanged);
 
-    QFontMetrics fm(m_font);
-    QRect rect = fm.boundingRect(m_cText);
+    QFontMetricsF fm(m_font);
+    QRectF rect = fm.boundingRect(m_cText);
     m_descent = fm.descent();
 //    qDebug() << "tightBoundingRect:" << fm.tightBoundingRect(m_cText);
 //    qDebug() << "boundingRect:" << fm.boundingRect(m_cText);
@@ -50,7 +50,8 @@ void CanvasTextItem::setCurrentText(const QString& text)
 //    qDebug() << "leftBearing:" << fm.leftBearing(m_cText[0]);
 //    qDebug() << "minLeftBearing:" << fm.minLeftBearing();
 
-    m_startSize = m_size = QSize(rect.width(), rect.height());
+    m_startSize = m_size = QSizeF(rect.width(), rect.height());
+    m_originSize = m_startSize;
     this->prepareGeometryChange();
 
     this->update();
@@ -60,11 +61,13 @@ void CanvasTextItem::setCurrentFont(const QFont& font)
 {
     m_font = font;
 
-    QFontMetrics fm(m_font);
-    QRect rect = fm.boundingRect(m_cText);
+    QFontMetricsF fm(m_font);
+    QRectF rect = fm.boundingRect(m_cText);
     m_descent = fm.descent();
 
-    m_startSize = m_size = QSize(rect.width(), rect.height());
+    m_startSize = m_size = QSizeF(rect.width(), rect.height());
+    m_originSize = m_startSize;
+
     this->prepareGeometryChange();
 
     this->update();
@@ -74,14 +77,14 @@ void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsIt
 {
     painter->save();
     QPointF centerPos(0, 0);
-    QRectF textRect =  QRectF(centerPos.x() - m_startSize.width() / 2, centerPos.y() - m_startSize.height() / 2, \
-                            m_startSize.width(), m_startSize.height());
+    QRectF textRect =  QRectF(centerPos.x() - m_originSize.width() / 2, centerPos.y() - m_originSize.height() / 2, \
+                            m_originSize.width(), m_originSize.height());
     QPainterPath path;
     path.addText(QPointF(textRect.bottomLeft().x(), textRect.bottomLeft().y() - m_descent), m_font, m_cText);
-    qDebug() << "m_size:" << m_size;
-    qDebug() << "m_startSize:" << m_startSize;
-    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
-    qDebug();
+//    qDebug() << "m_size:" << m_size;
+//    qDebug() << "m_startSize:" << m_startSize;
+//    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
+//    qDebug();
 
     // 添加轮廓
     QPen pen;
@@ -110,13 +113,20 @@ void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsIt
 
 void CanvasTextItem::mouseMoveResizeOperator(const QPointF &scenePos, const QPointF &loacalPos)
 {
+//    qreal xInterval = scenePos.x() - m_pressedPos.x();
+//    qreal yInterval = scenePos.y() - m_pressedPos.y();
+
+//    this->setPos(m_startPos + QPointF(xInterval, yInterval));
+//    m_startPos = this->pos() + QPointF(xInterval, yInterval);
+    qDebug() << "mouseMoveResizeOperator m_startPos:" << m_startPos;
+//    qDebug() << "mouseMoveResizeOperator  QPointF(xInterval, yInterval):" <<  QPointF(xInterval, yInterval);
 //    qreal ratio = m_ratioValue;
     qreal itemWidth = abs(loacalPos.x()) * 2 - m_nInterval - m_nEllipseWidth;
     qreal itemHeight = abs(loacalPos.y()) * 2 - m_nInterval - m_nEllipseWidth;
     //    if (m_isRatioScale)
     //        itemHeight = itemWidth * 1.0 / ratio;
-    m_scaleX = itemWidth / m_startSize.width();
-    m_scaleY = itemHeight / m_startSize.height();
+    m_scaleX = itemWidth / m_originSize.width();
+    m_scaleY = itemHeight / m_originSize.height();
 
 //    qDebug() << "m_size:" << m_size;
 //    qDebug() << "m_startSize:" << m_startSize;
@@ -125,7 +135,7 @@ void CanvasTextItem::mouseMoveResizeOperator(const QPointF &scenePos, const QPoi
     if (itemWidth < 10 || itemHeight < 10)
         return;
 
-    m_size = QSize(m_startSize.width() * m_scaleX, m_startSize.height() * m_scaleY);
+    m_size = QSize(m_originSize.width() * m_scaleX, m_originSize.height() * m_scaleY);
     //    m_pWidthAttribute->setValue(m_size.width());
     //    m_pHeightAttribute->setValue(m_size.height());
 
@@ -236,21 +246,4 @@ void CanvasTextItem::onFontSizeValueChanged(const QVariant& fontSize)
     m_font.setPixelSize(fontSize.toInt());
     setCurrentFont(m_font);
     this->update();
-}
-
-QRectF CanvasTextItem::setupTextLayout(QTextLayout *layout)
-{
-    layout->setCacheEnabled(true);
-    layout->beginLayout();
-    while (layout->createLine().isValid());
-    layout->endLayout();
-    qreal maxWidth = 0;
-    qreal y = 0;
-    for (int i = 0; i < layout->lineCount(); ++i) {
-        QTextLine line = layout->lineAt(i);
-        maxWidth = qMax(maxWidth, line.naturalTextWidth());
-        line.setPosition(QPointF(0, y));
-        y += line.height();
-    }
-    return QRectF(0, 0, maxWidth, y);
 }

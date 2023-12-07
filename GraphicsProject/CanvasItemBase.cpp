@@ -160,6 +160,8 @@ void CanvasItemBase::mousePressEvent(QGraphicsSceneMouseEvent* event)
     m_startPos = this->pos();
     m_startRotate = m_rotate;
     m_startSize = m_size;
+    qDebug() << "1111 m_startPos:" << m_startPos;
+
     return QGraphicsItem::mousePressEvent(event);
 }
 
@@ -168,19 +170,27 @@ void CanvasItemBase::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     // 获取场景坐标和本地坐标
     QPointF scenePos = event->scenePos();
     QPointF pos = event->pos();
+    qDebug() << "m_itemOper:" << m_itemOper;
+    qDebug() << "2222 m_startPos:" << m_startPos;
 
     if (m_itemOper == t_move)
     {
+        qDebug() << "111111111";
+
         // 处理移动
         mouseMoveMoveOperator(scenePos, pos);
     }
     else if (m_itemOper == t_resize)
     {
+        qDebug() << "222222222";
+
         // 处理更改大小
         mouseMoveResizeOperator(scenePos, pos);
     }
     else if (m_itemOper == t_rotate)
     {
+        qDebug() << "333333333";
+
         // 处理旋转
         mouseMoveRotateOperator(scenePos, pos);
     }

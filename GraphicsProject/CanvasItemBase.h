@@ -127,9 +127,12 @@ protected:
     qreal m_startRotate = 0.0;  // 起始旋转角度
     qreal m_rotate = 0.0;       // 当前旋转角度
     QSizeF m_startSize;          // 起始矩形
+    QSizeF m_originSize;
 
     int m_nInterval = 0;
     int m_nEllipseWidth = 12;    // 半径
+    qreal m_scaleX = 1;
+    qreal m_scaleY = 1;
 private:
 
     // 画笔设置

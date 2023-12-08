@@ -1,5 +1,5 @@
-#ifndef UICANVASRECTITEM_H
-#define UICANVASRECTITEM_H
+#ifndef CANVASRECTITEM_H
+#define CANVASRECTITEM_H
 
 #include "CanvasItemBase.h"
 

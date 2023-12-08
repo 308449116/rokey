@@ -1,5 +1,5 @@
-#ifndef UICANVASTEXTITEM_H
-#define UICANVASTEXTITEM_H
+#ifndef CANVASTEXTITEM_H
+#define CANVASTEXTITEM_H
 
 #include <QGraphicsItem>
 #include <QFont>
@@ -27,7 +27,7 @@ public:
 protected:
     // 自定义元素绘制
     void customPaint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    void mouseMoveResizeOperator(const QPointF& scenePos, const QPointF& loacalPos) override;
+//    void mouseMoveResizeOperator(const QPointF& scenePos, const QPointF& loacalPos) override;
 
 private:
     QString m_cText;

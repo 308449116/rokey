@@ -94,11 +94,7 @@ void CanvasItemBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 //    qDebug() << "itemRect:" <<itemRect;
     // 绘制轮廓线
     QRectF outLintRect = itemRect.adjusted(-m_nInterval, -m_nInterval, m_nInterval, m_nInterval);
-//    qDebug() << "outLintRect:" <<outLintRect;
-//    painter->save();
-//    painter->scale(2, 1);
     painter->drawRect(outLintRect);
-//    painter->restore();
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(QBrush(m_cBrushColor));
@@ -207,27 +203,44 @@ void CanvasItemBase::mouseMoveMoveOperator(const QPointF& scenePos, const QPoint
     this->update();
 }
 
-void CanvasItemBase::mouseMoveResizeOperator(const QPointF& scenePos, const QPointF& loacalPos)
+void CanvasItemBase::mouseMoveResizeOperator(const QPointF &scenePos, const QPointF &loacalPos)
 {
-    if (!m_isResizeable)
-        return;
-
-    qreal ratio = m_ratioValue;
     qreal itemWidth = abs(loacalPos.x()) * 2 - m_nInterval - m_nEllipseWidth;
     qreal itemHeight = abs(loacalPos.y()) * 2 - m_nInterval - m_nEllipseWidth;
-//    if (m_isRatioScale)
-//        itemHeight = itemWidth * 1.0 / ratio;
+    //    if (m_isRatioScale)
+    //        itemHeight = itemWidth * 1.0 / ratio;
+    m_scaleX = itemWidth / m_originSize.width();
+    m_scaleY = itemHeight / m_originSize.height();
 
+    //    qDebug() << "m_size:" << m_size;
     // 设置图片的最小大小为10
     if (itemWidth < 10 || itemHeight < 10)
         return;
 
-    m_size = QSize(itemWidth, itemHeight);
-//    m_pWidthAttribute->setValue(m_size.width());
-//    m_pHeightAttribute->setValue(m_size.height());
-
+    m_size = QSize(m_originSize.width() * m_scaleX, m_originSize.height() * m_scaleY);
     this->update();
 }
+//void CanvasItemBase::mouseMoveResizeOperator(const QPointF& scenePos, const QPointF& loacalPos)
+//{
+//    if (!m_isResizeable)
+//        return;
+
+//    qreal ratio = m_ratioValue;
+//    qreal itemWidth = abs(loacalPos.x()) * 2 - m_nInterval - m_nEllipseWidth;
+//    qreal itemHeight = abs(loacalPos.y()) * 2 - m_nInterval - m_nEllipseWidth;
+////    if (m_isRatioScale)
+////        itemHeight = itemWidth * 1.0 / ratio;
+
+//    // 设置图片的最小大小为10
+//    if (itemWidth < 10 || itemHeight < 10)
+//        return;
+
+//    m_size = QSize(itemWidth, itemHeight);
+////    m_pWidthAttribute->setValue(m_size.width());
+////    m_pHeightAttribute->setValue(m_size.height());
+
+//    this->update();
+//}
 
 void CanvasItemBase::mouseMoveRotateOperator(const QPointF& scenePos, const QPointF& loacalPos)
 {

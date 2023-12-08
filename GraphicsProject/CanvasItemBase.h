@@ -1,5 +1,5 @@
-#ifndef UICANVASITEMBASE_H
-#define UICANVASITEMBASE_H
+#ifndef CANVASITEMBASE_H
+#define CANVASITEMBASE_H
 
 #include <QObject>
 #include <QGraphicsItem>

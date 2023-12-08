@@ -5,7 +5,7 @@
 #include "scenegraphics.h"
 
 class RectGrabber;
-class ItemGroupGraphics;
+class CanvasTextItem;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,8 +24,12 @@ private slots:
 
     void on_textBtn_clicked();
 
+    void on_barcodeBtn_clicked();
+
 private:
     Ui::MainWindow* ui;
     SceneGraphics* m_scene;
+    CanvasTextItem* textItem;
+    QGraphicsSimpleTextItem *textitem2;
 };
 #endif // MAINWINDOW_H

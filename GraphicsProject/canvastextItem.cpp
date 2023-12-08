@@ -1,4 +1,4 @@
-#include "CanvasTextItem.h"
+#include "canvastextitem.h"
 //#include "NDNodeBase.h"
 //#include "NDBoolAttribute.h"
 //#include "NDIntAttribute.h"
@@ -111,36 +111,36 @@ void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsIt
     painter->restore();
 }
 
-void CanvasTextItem::mouseMoveResizeOperator(const QPointF &scenePos, const QPointF &loacalPos)
-{
-//    qreal xInterval = scenePos.x() - m_pressedPos.x();
-//    qreal yInterval = scenePos.y() - m_pressedPos.y();
+//void CanvasTextItem::mouseMoveResizeOperator(const QPointF &scenePos, const QPointF &loacalPos)
+//{
+////    qreal xInterval = scenePos.x() - m_pressedPos.x();
+////    qreal yInterval = scenePos.y() - m_pressedPos.y();
 
-//    this->setPos(m_startPos + QPointF(xInterval, yInterval));
-//    m_startPos = this->pos() + QPointF(xInterval, yInterval);
-    qDebug() << "mouseMoveResizeOperator m_startPos:" << m_startPos;
-//    qDebug() << "mouseMoveResizeOperator  QPointF(xInterval, yInterval):" <<  QPointF(xInterval, yInterval);
-//    qreal ratio = m_ratioValue;
-    qreal itemWidth = abs(loacalPos.x()) * 2 - m_nInterval - m_nEllipseWidth;
-    qreal itemHeight = abs(loacalPos.y()) * 2 - m_nInterval - m_nEllipseWidth;
-    //    if (m_isRatioScale)
-    //        itemHeight = itemWidth * 1.0 / ratio;
-    m_scaleX = itemWidth / m_originSize.width();
-    m_scaleY = itemHeight / m_originSize.height();
+////    this->setPos(m_startPos + QPointF(xInterval, yInterval));
+////    m_startPos = this->pos() + QPointF(xInterval, yInterval);
+////    qDebug() << "mouseMoveResizeOperator m_startPos:" << m_startPos;
+////    qDebug() << "mouseMoveResizeOperator  QPointF(xInterval, yInterval):" <<  QPointF(xInterval, yInterval);
+////    qreal ratio = m_ratioValue;
+//    qreal itemWidth = abs(loacalPos.x()) * 2 - m_nInterval - m_nEllipseWidth;
+//    qreal itemHeight = abs(loacalPos.y()) * 2 - m_nInterval - m_nEllipseWidth;
+//    //    if (m_isRatioScale)
+//    //        itemHeight = itemWidth * 1.0 / ratio;
+//    m_scaleX = itemWidth / m_originSize.width();
+//    m_scaleY = itemHeight / m_originSize.height();
 
-//    qDebug() << "m_size:" << m_size;
-//    qDebug() << "m_startSize:" << m_startSize;
-//    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
-    // 设置图片的最小大小为10
-    if (itemWidth < 10 || itemHeight < 10)
-        return;
+////    qDebug() << "m_size:" << m_size;
+////    qDebug() << "m_startSize:" << m_startSize;
+////    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
+//    // 设置图片的最小大小为10
+//    if (itemWidth < 10 || itemHeight < 10)
+//        return;
 
-    m_size = QSize(m_originSize.width() * m_scaleX, m_originSize.height() * m_scaleY);
-    //    m_pWidthAttribute->setValue(m_size.width());
-    //    m_pHeightAttribute->setValue(m_size.height());
+//    m_size = QSize(m_originSize.width() * m_scaleX, m_originSize.height() * m_scaleY);
+//    //    m_pWidthAttribute->setValue(m_size.width());
+//    //    m_pHeightAttribute->setValue(m_size.height());
 
-    this->update();
-}
+//    this->update();
+//}
 
 //void CanvasTextItem::initAttribute(void)
 //{

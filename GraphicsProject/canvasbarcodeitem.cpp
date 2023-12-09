@@ -18,6 +18,7 @@
 #include "Barcode.h"
 
 #include <QPainter>
+#include <QDebug>
 
 using namespace sojet::barcode;
 

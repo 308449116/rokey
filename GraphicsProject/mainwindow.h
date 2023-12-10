@@ -24,6 +24,8 @@ private slots:
 
     void on_textBtn_clicked();
 
+    void on_imageBtn_clicked();
+
 private:
     Ui::MainWindow* ui;
     SceneGraphics* m_scene;

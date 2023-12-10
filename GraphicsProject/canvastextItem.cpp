@@ -1,4 +1,4 @@
-#include "CanvasTextItem.h"
+#include "canvastextItem.h"
 //#include "NDNodeBase.h"
 //#include "NDBoolAttribute.h"
 //#include "NDIntAttribute.h"
@@ -76,6 +76,10 @@ void CanvasTextItem::setCurrentFont(const QFont& font)
 void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->save();
+//    qDebug() << "33333 customPaint pos:" << this->pos();
+//    this->setTransformOriginPoint(m_centerPos);
+//    qDebug() << "44444 customPaint pos:" << this->pos();
+
     QPointF centerPos(0, 0);
     QRectF textRect =  QRectF(centerPos.x() - m_originSize.width() / 2, centerPos.y() - m_originSize.height() / 2, \
                             m_originSize.width(), m_originSize.height());
@@ -90,7 +94,9 @@ void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsIt
     QPen pen;
     pen.setWidth(1);
     pen.setColor(Qt::black);
+
 //    painter->strokePath(path, pen);
+
     painter->scale(m_scaleX, m_scaleY);
 
     // 绘制
@@ -118,7 +124,7 @@ void CanvasTextItem::mouseMoveResizeOperator(const QPointF &scenePos, const QPoi
 
 //    this->setPos(m_startPos + QPointF(xInterval, yInterval));
 //    m_startPos = this->pos() + QPointF(xInterval, yInterval);
-    qDebug() << "mouseMoveResizeOperator m_startPos:" << m_startPos;
+//    qDebug() << "mouseMoveResizeOperator m_startPos:" << m_startPos;
 //    qDebug() << "mouseMoveResizeOperator  QPointF(xInterval, yInterval):" <<  QPointF(xInterval, yInterval);
 //    qreal ratio = m_ratioValue;
     qreal itemWidth = abs(loacalPos.x()) * 2 - m_nInterval - m_nEllipseWidth;

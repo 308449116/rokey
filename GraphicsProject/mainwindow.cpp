@@ -10,10 +10,28 @@ MainWindow::MainWindow(QWidget* parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    int width = 400;
+    int height = 400;
 
+    QRectF rect(-width/2, -height/2, width, height);
     m_scene = new SceneGraphics(this);
-    m_scene->setSceneRect(0,0,400,400);
+    m_scene->setSceneRect(rect);
 
+    QGraphicsRectItem *rectItem = new QGraphicsRectItem(rect);
+    rectItem->setFlags(QGraphicsItem::ItemIsSelectable |
+                   QGraphicsItem::ItemSendsGeometryChanges);
+
+    QPen pen;
+    pen.setWidth(2);
+    pen.setStyle(Qt::DashLine);
+    QGraphicsLineItem *lineItemX = new QGraphicsLineItem(rect.left(), 0, rect.left() + rect.width(), 0);
+    QGraphicsLineItem *lineItemY = new QGraphicsLineItem(0, rect.top(), 0, rect.top() + rect.height());
+    lineItemX->setPen(pen);
+    lineItemY->setPen(pen);
+
+    m_scene->addItem(rectItem);
+    m_scene->addItem(lineItemX);
+    m_scene->addItem(lineItemY);
     ui->graphicsView->setScene(m_scene);
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
@@ -48,3 +66,13 @@ void MainWindow::on_textBtn_clicked()
     m_scene->addItem(textItem);
 }
 
+
+void MainWindow::on_imageBtn_clicked()
+{
+    QGraphicsRectItem *rectItem = new QGraphicsRectItem(QRectF(0,0,100,100));
+    rectItem->setFlags(QGraphicsItem::ItemIsSelectable |
+                       QGraphicsItem::ItemIsMovable |
+                   QGraphicsItem::ItemSendsGeometryChanges);
+    m_scene->addItem(rectItem);
+
+}

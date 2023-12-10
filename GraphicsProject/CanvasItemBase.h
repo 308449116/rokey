@@ -133,6 +133,7 @@ protected:
     int m_nEllipseWidth = 12;    // 半径
     qreal m_scaleX = 1;
     qreal m_scaleY = 1;
+    QPointF m_centerPos = {0, 0};
 private:
 
     // 画笔设置

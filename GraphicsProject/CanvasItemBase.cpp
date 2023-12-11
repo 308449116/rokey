@@ -1,4 +1,4 @@
-#include "CanvasItemBase.h"
+#include "canvasitembase.h"
 #include "Utils/utils.h"
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>

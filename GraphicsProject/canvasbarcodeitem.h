@@ -1,7 +1,7 @@
 #ifndef CANVASBARCODEITEM_H
 #define CANVASBARCODEITEM_H
 
-#include "CanvasItemBase.h"
+#include "canvasitembase.h"
 #include "Barcode.h"
 
 namespace sojet {

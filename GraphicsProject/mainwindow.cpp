@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "CanvasRectItem.h"
+#include "canvasrectitem.h"
 #include "canvastextitem.h"
 #include "canvasbarcodeitem.h"
 //#include "decoratoritemgraphics.h"

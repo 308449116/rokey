@@ -3,7 +3,7 @@
 
 #include <QGraphicsItem>
 #include <QFont>
-#include "CanvasItemBase.h"
+#include "canvasitembase.h"
 //#include "NDNodeManager.h"
 //#include "NDNodeBase.h"
 

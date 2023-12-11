@@ -28,8 +28,8 @@ SOURCES += \
     viewgraphics.cpp
 
 HEADERS += \
-    CanvasItemBase.h \
-    CanvasRectItem.h \
+    canvasitembase.h \
+    canvasrectitem.h \
     Utils/utils.h \
     canvasbarcodeitem.h \
     canvastextitem.h \

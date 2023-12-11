@@ -1,4 +1,4 @@
-#include "CanvasRectItem.h"
+#include "canvasrectitem.h"
 //#include "NDNodeBase.h"
 //#include "NDBoolAttribute.h"
 //#include "NDIntAttribute.h"

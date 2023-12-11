@@ -4,6 +4,7 @@
 #include "canvastextItem.h"
 //#include "decoratoritemgraphics.h"
 #include <QGraphicsItem>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -58,7 +59,7 @@ void MainWindow::on_textBtn_clicked()
 {
     QFont font;
     font.setPixelSize(50);
-    CanvasTextItem* textItem = new CanvasTextItem();
+    textItem = new CanvasTextItem();
 //    textItem->setCurrentText("123");
 //    textItem->setCurrentFont(font);
     //    RectGrabber* gabber = new RectGrabber(QSizeF(8, 8));
@@ -75,4 +76,19 @@ void MainWindow::on_imageBtn_clicked()
                    QGraphicsItem::ItemSendsGeometryChanges);
     m_scene->addItem(rectItem);
 
+    QTransform transform;
+    qDebug() << "center:" << rectItem->boundingRect().center();
+    qDebug() << "pos:" << rectItem->pos();
+    transform.translate(50, 50);
+    transform.rotate(45);
+    rectItem->setTransformOriginPoint(rectItem->boundingRect().center());
+    rectItem->setTransform(transform);
+
+}
+
+void MainWindow::on_counterBtn_clicked()
+{
+    QTransform transform;
+    transform.rotate(45);
+    textItem->setTransform(transform);
 }

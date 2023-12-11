@@ -26,6 +26,7 @@ private slots:
 
     void on_barcodeBtn_clicked();
 
+    void on_underLineBtn_clicked(bool checked);
 private:
     Ui::MainWindow* ui;
     SceneGraphics* m_scene;

@@ -19,18 +19,20 @@
 //#include "UICanvasItemManager.h"
 //#include "CanvasView.h"
 
-QImage CanvasItemBase::m_closeIcon;
-QImage CanvasItemBase::m_resizeIcon;
-QImage CanvasItemBase::m_rotateIcon;
+//QImage CanvasItemBase::m_closeIcon;
+//QImage CanvasItemBase::m_resizeIcon;
+//QImage CanvasItemBase::m_rotateIcon;
 
 CanvasItemBase::CanvasItemBase(QGraphicsItem* parentItem)
     :QGraphicsItem(parentItem)
     , m_cPenColor(255, 0, 0)
     , m_cBrushColor(200, 100, 100)
 {
-    this->setFlag(QGraphicsItem::ItemIsSelectable, true);
-    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
-
+//    this->setFlag(QGraphicsItem::ItemIsSelectable, true);
+//    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+    this->setFlags(QGraphicsItem::ItemIsSelectable |
+               QGraphicsItem::ItemIsFocusable |
+               QGraphicsItem::ItemSendsGeometryChanges);
 //    initIcon();
 
     // 初始化基本属性
@@ -134,21 +136,29 @@ void CanvasItemBase::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     QRectF itemRect = this->getCustomRect();
     QRectF outLintRect = itemRect.adjusted(-m_nInterval, -m_nInterval, m_nInterval, m_nInterval);
+    qDebug() << "1111 itemRect:" << itemRect;
+    qDebug() << "1111 m_itemOper:" << m_itemOper;
 
     // 获取当前模式
     QPointF pos = event->pos();
     QPointF scenePos = event->scenePos();
-    if (itemRect.contains(pos))
-        m_itemOper = t_move;
-    else if (g_utilTool->getDistance(pos, outLintRect.topRight()) <= m_nEllipseWidth)
+
+    if (g_utilTool->getDistance(pos, outLintRect.topRight()) <= m_nEllipseWidth)
     {
 //        g_currentCanvasManager->deleteCanvasItem(m_pNode);
         return;
     }
-    else if (g_utilTool->getDistance(pos, outLintRect.bottomLeft()) <= m_nEllipseWidth)
+    else if (g_utilTool->getDistance(pos, outLintRect.bottomLeft()) <= m_nEllipseWidth) {
         m_itemOper = t_rotate;
-    else if (g_utilTool->getDistance(pos, outLintRect.bottomRight()) <= m_nEllipseWidth)
+    }
+    else if (g_utilTool->getDistance(pos, outLintRect.bottomRight()) <= m_nEllipseWidth) {
         m_itemOper = t_resize;
+    } else {
+        if (itemRect.contains(pos)) {
+            m_itemOper = t_move;
+        }
+    }
+    qDebug() << "1111 m_itemOper:" << m_itemOper;
 
     // 保存当前的一些信息
     m_pos = pos;
@@ -156,8 +166,8 @@ void CanvasItemBase::mousePressEvent(QGraphicsSceneMouseEvent* event)
     m_startPos = this->pos();
     m_startRotate = m_rotate;
     m_startSize = m_size;
-    qDebug() << "1111 m_startPos:" << m_startPos;
-
+    qDebug() << "2222 m_startPos:" << m_startPos;
+//    update();
     return QGraphicsItem::mousePressEvent(event);
 }
 
@@ -171,22 +181,16 @@ void CanvasItemBase::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
     if (m_itemOper == t_move)
     {
-        qDebug() << "111111111";
-
         // 处理移动
         mouseMoveMoveOperator(scenePos, pos);
     }
     else if (m_itemOper == t_resize)
     {
-        qDebug() << "222222222";
-
         // 处理更改大小
         mouseMoveResizeOperator(scenePos, pos);
     }
     else if (m_itemOper == t_rotate)
     {
-        qDebug() << "333333333";
-
         // 处理旋转
         mouseMoveRotateOperator(scenePos, pos);
     }
@@ -205,8 +209,8 @@ void CanvasItemBase::mouseMoveMoveOperator(const QPointF& scenePos, const QPoint
 
 void CanvasItemBase::mouseMoveResizeOperator(const QPointF &scenePos, const QPointF &loacalPos)
 {
-    qreal itemWidth = abs(loacalPos.x()) * 2 - m_nInterval - m_nEllipseWidth;
-    qreal itemHeight = abs(loacalPos.y()) * 2 - m_nInterval - m_nEllipseWidth;
+    qreal itemWidth = abs(loacalPos.x()) - m_nInterval * 2 - m_nEllipseWidth;
+    qreal itemHeight = abs(loacalPos.y()) - m_nInterval * 2 - m_nEllipseWidth;
     //    if (m_isRatioScale)
     //        itemHeight = itemWidth * 1.0 / ratio;
     m_scaleX = itemWidth / m_originSize.width();
@@ -216,6 +220,8 @@ void CanvasItemBase::mouseMoveResizeOperator(const QPointF &scenePos, const QPoi
     // 设置图片的最小大小为10
     if (itemWidth < 10 || itemHeight < 10)
         return;
+
+    this->prepareGeometryChange();
 
     m_size = QSize(m_originSize.width() * m_scaleX, m_originSize.height() * m_scaleY);
     this->update();
@@ -244,46 +250,75 @@ void CanvasItemBase::mouseMoveResizeOperator(const QPointF &scenePos, const QPoi
 
 void CanvasItemBase::mouseMoveRotateOperator(const QPointF& scenePos, const QPointF& loacalPos)
 {
-    // 获取并设置为单位向量
-    QVector2D startVec(m_pos.x() - 0, m_pos.y() - 0);
-    startVec.normalize();
-    QVector2D endVec(loacalPos.x() - 0, loacalPos.y() - 0);
-    endVec.normalize();
+    QPointF originPos = this->boundingRect().center();
+    // 从原点延伸出去两条线，鼠标按下时的点和当前鼠标位置所在点的连线
+    QLineF p1 = QLineF(originPos, m_pos);
+    QLineF p2 = QLineF(originPos, loacalPos);
+    // 旋转角度
+    qreal dRotateAngle = p2.angleTo(p1);
 
-    // 单位向量点乘，计算角度
-    qreal dotValue = QVector2D::dotProduct(startVec, endVec);
-    if (dotValue > 1.0)
-        dotValue = 1.0;
-    else if (dotValue < -1.0)
-        dotValue = -1.0;
+    // 设置旋转中心
+    this->setTransformOriginPoint(originPos);
 
-    dotValue = qAcos(dotValue);
-    if (isnan(dotValue))
-        dotValue = 0.0;
+    // 计算当前旋转的角度
+    qreal dCurAngle = this->rotation() + dRotateAngle;
 
-    // 获取角度
-    qreal angle = dotValue * 1.0 / (PI / 180);
+    //    qDebug() << "dCurAngle" << dCurAngle;
+    //    qDebug() << "this->rotation()" << this->rotation();
+    //    qDebug() << "dRotateAngle" << dRotateAngle;
+    //    qDebug();
+    while (dCurAngle > 360.0) {
+        dCurAngle -= 360.0;
+    }
 
-    // 向量叉乘获取方向
-    QVector3D crossValue = QVector3D::crossProduct(QVector3D(startVec, 1.0), QVector3D(endVec, 1.0));
-    if (crossValue.z() < 0)
-        angle = -angle;
-    m_rotate += angle;
+    this->prepareGeometryChange();
 
-    // 设置角度在0~360之间
-    if (m_rotate >= 360)
-        m_rotate -= 360;
-    else if (m_rotate < 0)
-        m_rotate += 360;
-
-    // 设置变化矩阵
-    QTransform transform;
-    transform.rotate(m_rotate);
-    this->setTransform(transform);
-//    m_pRotateAttribute->setValue(m_rotate);
-
+    // 设置旋转角度
+    this->setRotation(dCurAngle);
     this->update();
 }
+
+//void CanvasItemBase::mouseMoveRotateOperator(const QPointF& scenePos, const QPointF& loacalPos)
+//{
+//    // 获取并设置为单位向量
+//    QVector2D startVec(m_pos.x() - 0, m_pos.y() - 0);
+//    startVec.normalize();
+//    QVector2D endVec(loacalPos.x() - 0, loacalPos.y() - 0);
+//    endVec.normalize();
+
+//    // 单位向量点乘，计算角度
+//    qreal dotValue = QVector2D::dotProduct(startVec, endVec);
+//    if (dotValue > 1.0)
+//        dotValue = 1.0;
+//    else if (dotValue < -1.0)
+//        dotValue = -1.0;
+
+//    dotValue = qAcos(dotValue);
+//    if (isnan(dotValue))
+//        dotValue = 0.0;
+
+//    // 获取角度
+//    qreal angle = dotValue * 1.0 / (PI / 180);
+
+//    // 向量叉乘获取方向
+//    QVector3D crossValue = QVector3D::crossProduct(QVector3D(startVec, 1.0), QVector3D(endVec, 1.0));
+//    if (crossValue.z() < 0)
+//        angle = -angle;
+//    m_rotate += angle;
+
+//    // 设置角度在0~360之间
+//    if (m_rotate >= 360)
+//        m_rotate -= 360;
+//    else if (m_rotate < 0)
+//        m_rotate += 360;
+
+//    // 设置变化矩阵
+//    QTransform transform;
+//    transform.rotate(m_rotate);
+//    this->setTransform(transform);
+
+//    this->update();
+//}
 
 void CanvasItemBase::mouseReleaseMoveOperator(const QPointF& scenePos, const QPointF& loacalPos)
 {
@@ -355,8 +390,9 @@ void CanvasItemBase::customPaint(QPainter* painter, const QStyleOptionGraphicsIt
 QRectF CanvasItemBase::getCustomRect(void) const
 {
     QPointF centerPos(0, 0);
-    return QRectF(centerPos.x() - m_size.width() / 2, centerPos.y() - m_size.height() / 2, \
-                                            m_size.width(), m_size.height());
+    return QRectF(centerPos.x(), centerPos.y(), m_size.width(), m_size.height());
+//    return QRectF(centerPos.x() - m_size.width() / 2, centerPos.y() - m_size.height() / 2, \
+//                                            m_size.width(), m_size.height());
 }
 
 //void CanvasItemBase::initIcon(void)

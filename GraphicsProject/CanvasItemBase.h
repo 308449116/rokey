@@ -51,9 +51,9 @@ private:
     // 初始化Icon
 //    void initIcon(void);
 
-    static QImage m_closeIcon;
-    static QImage m_resizeIcon;
-    static QImage m_rotateIcon;
+//    static QImage m_closeIcon;
+//    static QImage m_resizeIcon;
+//    static QImage m_rotateIcon;
 
     QPixmap m_closePixmap = QPixmap(":/icons/close.png");
     QPixmap m_resizePixmap = QPixmap(":/icons/resize.png");

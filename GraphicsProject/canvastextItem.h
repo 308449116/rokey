@@ -21,8 +21,11 @@ public:
 
     // 设置文本
     void setCurrentText(const QString& text);
+    QString getCurrentText() const;
+
     // 设置字体
     void setCurrentFont(const QFont& font);
+    QFont getCurrentFont() const;
 
 protected:
     // 自定义元素绘制
@@ -30,7 +33,7 @@ protected:
 //    void mouseMoveResizeOperator(const QPointF& scenePos, const QPointF& loacalPos) override;
 
 private:
-    QString m_cText;
+    QString m_Text;
     QFont m_font;
     int m_descent;
 //    void initAttribute(void);

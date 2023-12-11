@@ -45,7 +45,7 @@ void SceneGraphics::keyPressEvent(QKeyEvent *event)
 //            }
             delete item;
         }
-        deselectItems();
+//        deselectItems();
         break;
     }
     case Qt::Key_A: {

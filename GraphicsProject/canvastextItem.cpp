@@ -17,7 +17,7 @@ CanvasTextItem::CanvasTextItem(QGraphicsItem* parentItem)
 //    this->setItemResizeable(false);
     //    initAttribute();
 
-    setCurrentText("jpkD");
+    setCurrentText("jpkg");
 }
 
 CanvasTextItem::~CanvasTextItem()
@@ -27,18 +27,18 @@ CanvasTextItem::~CanvasTextItem()
 
 void CanvasTextItem::setCurrentText(const QString& text)
 {
-    m_cText = text;
+    m_Text = text;
 
     //    QObject::disconnect(m_pTextValueAttribute, &NDStringAttribute::valueChanged, this, &CanvasTextItem::onTextValueChanged);
-    //    m_pTextValueAttribute->setValue(m_cText);
+    //    m_pTextValueAttribute->setValue(m_Text);
     //    QObject::connect(m_pTextValueAttribute, &NDStringAttribute::valueChanged, this, &CanvasTextItem::onTextValueChanged);
 
     QFontMetricsF fm(m_font);
-    QRectF rect = fm.boundingRect(m_cText);
+    QRectF rect = fm.boundingRect(m_Text);
     m_descent = fm.descent();
-//    qDebug() << "tightBoundingRect:" << fm.tightBoundingRect(m_cText);
-//    qDebug() << "boundingRect:" << fm.boundingRect(m_cText);
-//    qDebug() << "mapRectFromScene:" << mapRectFromScene(fm.tightBoundingRect(m_cText));
+//    qDebug() << "tightBoundingRect:" << fm.tightBoundingRect(m_Text);
+//    qDebug() << "boundingRect:" << fm.boundingRect(m_Text);
+//    qDebug() << "mapRectFromScene:" << mapRectFromScene(fm.tightBoundingRect(m_Text));
 //    qDebug() << "descent:" << fm.descent();
 //    qDebug() << "ascent:" << fm.ascent();
 //    qDebug() << "height:" << fm.height();
@@ -47,7 +47,7 @@ void CanvasTextItem::setCurrentText(const QString& text)
 //    qDebug() << "overlinePos:" << fm.overlinePos();
 //    qDebug() << "strikeOutPos:" << fm.strikeOutPos();
 //    qDebug() << "lineWidth:" << fm.lineWidth();
-//    qDebug() << "leftBearing:" << fm.leftBearing(m_cText[0]);
+//    qDebug() << "leftBearing:" << fm.leftBearing(m_Text[0]);
 //    qDebug() << "minLeftBearing:" << fm.minLeftBearing();
 
     m_startSize = m_size = QSizeF(rect.width(), rect.height());
@@ -57,12 +57,17 @@ void CanvasTextItem::setCurrentText(const QString& text)
     this->update();
 }
 
+QString CanvasTextItem::getCurrentText() const
+{
+    return m_Text;
+}
+
 void CanvasTextItem::setCurrentFont(const QFont& font)
 {
     m_font = font;
 
     QFontMetricsF fm(m_font);
-    QRectF rect = fm.boundingRect(m_cText);
+    QRectF rect = fm.boundingRect(m_Text);
     m_descent = fm.descent();
 
     m_startSize = m_size = QSizeF(rect.width(), rect.height());
@@ -73,17 +78,39 @@ void CanvasTextItem::setCurrentFont(const QFont& font)
     this->update();
 }
 
+QFont CanvasTextItem::getCurrentFont() const
+{
+    return m_font;
+}
+
 void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->save();
     QPointF centerPos(0, 0);
-    QRectF textRect =  QRectF(centerPos.x() - m_originSize.width() / 2, centerPos.y() - m_originSize.height() / 2, \
-                            m_originSize.width(), m_originSize.height());
+    QRectF textRect =  QRectF(centerPos.x(), centerPos.y(), \
+                                                           m_originSize.width(), m_originSize.height());
+    //scale
+    painter->scale(m_scaleX, m_scaleY);
+
+    // 绘制
+    painter->setFont(m_font);
+    painter->drawText(QPointF(textRect.bottomLeft().x(), textRect.bottomLeft().y() - m_descent), m_Text);
+    painter->restore();
+}
+/*
+void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    painter->save();
+    QPointF centerPos(0, 0);
+//    QRectF textRect =  QRectF(centerPos.x() - m_originSize.width() / 2, centerPos.y() - m_originSize.height() / 2, \
+//                            m_originSize.width(), m_originSize.height());
+    QRectF textRect =  QRectF(centerPos.x(), centerPos.y(), \
+                                                           m_originSize.width(), m_originSize.height());
     QPainterPath path;
-    path.addText(QPointF(textRect.bottomLeft().x(), textRect.bottomLeft().y() - m_descent), m_font, m_cText);
+    path.addText(QPointF(textRect.bottomLeft().x(), textRect.bottomLeft().y() - m_descent), m_font, m_Text);
 //    qDebug() << "m_size:" << m_size;
 //    qDebug() << "m_startSize:" << m_startSize;
-//    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
+    qDebug() << "m_scaleX:" << m_scaleX<< " m_scaleY:"<<m_scaleY;
 //    qDebug();
 
     // 添加轮廓
@@ -110,6 +137,7 @@ void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsIt
 
     painter->restore();
 }
+*/
 
 //void CanvasTextItem::mouseMoveResizeOperator(const QPointF &scenePos, const QPointF &loacalPos)
 //{
@@ -149,7 +177,7 @@ void CanvasTextItem::customPaint(QPainter *painter, const QStyleOptionGraphicsIt
 
 //    // 本文内容
 //    m_pTextValueAttribute = new NDStringAttribute;
-//    m_pTextValueAttribute->setValue(m_cText);
+//    m_pTextValueAttribute->setValue(m_Text);
 //    m_pTextValueAttribute->setDisplayName(tr("Text: "));
 //    m_pTextValueAttribute->setName("text");
 //    m_pTextValueAttribute->setShowButton(false);

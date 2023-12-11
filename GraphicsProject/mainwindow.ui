@@ -17,7 +17,7 @@
    <enum>Qt::ToolButtonTextUnderIcon</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="2,12,2">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -104,7 +104,7 @@
      <widget class="ViewGraphics" name="graphicsView"/>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1,1,1,1,0,1,2">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QPushButton" name="underLineBtn">
         <property name="sizePolicy">
@@ -218,7 +218,7 @@
      <x>0</x>
      <y>0</y>
      <width>704</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

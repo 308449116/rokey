@@ -18,7 +18,6 @@
 #include "Barcode.h"
 
 #include <QPainter>
-#include <QDebug>
 
 using namespace sojet::barcode;
 
@@ -50,13 +49,14 @@ void CanvasBarcodeItem::customPaint(QPainter *painter, const QStyleOptionGraphic
 
     QBrush brush(Qt::SolidPattern);
     brush.setColor(Qt::black);
-    painter->setRenderHint(QPainter::Antialiasing);
+//    painter->setRenderHint(QPainter::Antialiasing);
+    painter->scale(m_scaleX, m_scaleY);
 
     // Plot rectangles
     const std::vector<barcode_rect>& vectRect = m_barcode->getVectorRect();
     for (int i = 0; i < vectRect.size(); i++) {
-        qDebug() << QRectF(vectRect[i].x, vectRect[i].y, vectRect[i].width, vectRect[i].height);
-        qDebug("x:%f, y%f",vectRect[i].x,vectRect[i].y);
+//        qDebug() << QRectF(vectRect[i].x, vectRect[i].y, vectRect[i].width, vectRect[i].height);
+//        qDebug("x:%f, y%f",vectRect[i].x,vectRect[i].y);
 
         painter->fillRect(QRectF(vectRect[i].x, vectRect[i].y, vectRect[i].width, vectRect[i].height), brush);
     }
@@ -113,9 +113,11 @@ void CanvasBarcodeItem::customPaint(QPainter *painter, const QStyleOptionGraphic
         painter->setFont(font);
         QFontMetricsF fm(font);
         QRectF rect = fm.boundingRect(textContent);
-        painter->drawText(QPointF(vectString[i].x, vectString[i].y + rect.height()), textContent);
+        int x = vectString[i].x - (rect.width() / 2.0);
+        if (x < 0)
+            x = 0;
+        painter->drawText(QPointF(x, vectString[i].y + rect.height()), textContent);
         qDebug() << "vectString:" << QPointF(vectString[i].x, vectString[i].y);
-
     }
 
     painter->restore();
@@ -124,7 +126,7 @@ void CanvasBarcodeItem::customPaint(QPainter *painter, const QStyleOptionGraphic
 void CanvasBarcodeItem::encode()
 {
     QString text = "jpkg";
-    float xdimension = 9;
+    float xdimension = 2;
     float barHeight = 280 / xdimension;
     switch (BarcodeFormat::CODE_128) {
     case BarcodeFormat::CODABAR: {
@@ -280,7 +282,15 @@ void CanvasBarcodeItem::encode()
         //throw BarcodeException(sErrorMsg);
     }
 
-    m_size = QSizeF(m_barcode->getWidth(), m_barcode->getHeight());
+    if (m_barcode->getHumanReadableLocation()) {
+        QFont font;
+        font.setPixelSize(50);
+        QFontMetricsF fm(font);
+        QRectF rect = fm.boundingRect(text);
+        m_originSize = m_size = QSizeF(qMax(m_barcode->getWidth(), rect.width()), m_barcode->getHeight() + rect.height() + fm.descent());
+    } else {
+        m_originSize = m_size = QSizeF(m_barcode->getWidth(), m_barcode->getHeight());
+    }
 }
 
 void CanvasBarcodeItem::onValueChanged(void)

@@ -17,8 +17,8 @@ LIBS += -L$$PWD/lib -lbarcode
 INCLUDEPATH += $$PWD/include/barcode
 
 SOURCES += \
-    CanvasItemBase.cpp \
-    CanvasRectItem.cpp \
+    canvasitembase.cpp \
+    canvasrectitem.cpp \
     Utils/utils.cpp \
     canvasbarcodeitem.cpp \
     canvastextitem.cpp \
